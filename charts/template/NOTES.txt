@@ -1,0 +1,19 @@
+Thank you for installing {{ .Chart.Name }}.
+
+Your release is named {{ .Release.Name }}.
+
+
+To learn more about the release, try:
+
+  $ helm status {{ .Release.Name }}
+  $ helm get {{ .Release.Name }}
+
+
+To delete :
+ helm delete --purge {{ .Release.Name }}
+
+To Test:
+Send a curl with hostname or access it via a web browser by adding necessary host entries in your client.
+
+$ curl http://<external-ip-cpx-service>/ -H 'Host: citrix-ingress-gke.com'
+<html><body><h1>It works!</h1></body></html>

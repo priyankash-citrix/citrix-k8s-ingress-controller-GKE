@@ -1,0 +1,128 @@
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: cpx-ingress-k8s-role
+rules:
+  - apiGroups: [""]
+    resources: ["services", "endpoints", "ingresses", "pods", "secrets"]
+    verbs: ["*"]
+  - apiGroups: ["extensions"]
+    resources: ["ingresses", "ingresses/status"]
+    verbs: ["*"]
+  - apiGroups: ["citrix.com"]
+    resources: ["rewritepolicies"]
+    verbs: ["*"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["*"]
+
+---
+
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: cpx-ingress-k8s-role
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cpx-ingress-k8s-role
+subjects:
+- kind: ServiceAccount
+  name: cpx-ingress-k8s-role
+  namespace: {{ .Release.Namespace }}
+apiVersion: rbac.authorization.k8s.io/v1
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cpx-ingress-k8s-role
+  namespace: {{ .Release.Namespace }}
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cpx-ingress
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: cpx-ingress
+      labels:
+        app: cpx-ingress
+      annotations:
+    spec:
+      serviceAccountName: cpx-ingress-k8s-role
+      containers:
+        - name: cpx-ingress
+          image: "{{ .Values.cpximage.repository}}:{{ .Values.cpximage.tag}}"
+          imagePullPolicy: {{ .Values.cpximage.pullPolicy }}
+          securityContext:
+             privileged: true
+          env:
+          - name: "EULA"
+            value: {{ .Values.license.accept | quote }}
+          - name: "KUBERNETES_TASK_ID"
+            value: ""
+          imagePullPolicy: Always
+        # Add cic as a sidecar
+        - name: cic
+          image: "{{ .Values.cicimage.repository}}:{{ .Values.cicimage.tag}}"
+          imagePullPolicy: {{ .Values.cicimage.pullPolicy }}
+          env:
+          - name: "EULA"
+            value: {{ .Values.license.accept | quote }}
+          - name: "NS_IP"
+            value: "127.0.0.1"
+          - name: "NS_PROTOCOL"
+            value: "HTTP"
+          - name: "NS_PORT"
+            value: "80"
+          - name: "NS_DEPLOYMENT_MODE"
+            value: "SIDECAR"
+          - name: "NS_ENABLE_MONITORING"
+            value: "YES"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+{{- if .Values.kubernetesURL }}
+          - name: "kubernetes_url"
+            value: "{{ .Values.kubernetesURL }}"
+{{- end}}
+{{- if .Values.ingressClass }}
+          args:
+           - --ingress-class
+{{- range .Values.ingressClass}}
+            {{.}}
+{{- end }}
+{{- end }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cpx-service
+  labels:
+    app: cpx-service
+spec:
+  externalTrafficPolicy: Local
+  type: LoadBalancer
+  ports:
+  - port: 80
+    protocol: TCP
+    name: http
+  - port: 443
+    protocol: TCP
+    name: https
+  selector:
+    app: cpx-ingress
