@@ -64,17 +64,30 @@ spec:
              privileged: true
           env:
           - name: "EULA"
-            value: {{ .Values.license.accept | quote }}
+            value: "yes"
           - name: "KUBERNETES_TASK_ID"
             value: ""
+{{- if not .Values.gclb}}
+          #This is required for Health check to succeed
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 9080
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
           imagePullPolicy: Always
+{{- end}}
         # Add cic as a sidecar
         - name: cic
           image: "{{ .Values.cicimage.repository}}:{{ .Values.cicimage.tag}}"
           imagePullPolicy: {{ .Values.cicimage.pullPolicy }}
           env:
           - name: "EULA"
-            value: {{ .Values.license.accept | quote }}
+            value: "{{ .Values.license.accept }}"
           - name: "NS_IP"
             value: "127.0.0.1"
           - name: "NS_PROTOCOL"
@@ -95,16 +108,20 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.namespace
-{{- if .Values.kubernetesURL }}
-          - name: "kubernetes_url"
-            value: "{{ .Values.kubernetesURL }}"
-{{- end}}
 {{- if .Values.ingressClass }}
           args:
            - --ingress-class
 {{- range .Values.ingressClass}}
             {{.}}
 {{- end }}
+{{- end }}
+{{- if .Values.exporter.require }}
+        - name: exporter
+          image: "{{ .Values.exporter.image.repository }}:{{ .Values.exporter.image.tag }}"
+          args:
+            - "--target-nsip=127.0.0.1"
+            - "--port={{ .Values.exporter.ports.containerPort }}"
+          imagePullPolicy: {{ .Values.exporter.image.pullPolicy }}
 {{- end }}
 
 ---
@@ -124,5 +141,35 @@ spec:
   - port: 443
     protocol: TCP
     name: https
+{{- if .Values.exporter.require }}
+  - port: {{ .Values.exporter.ports.containerPort }}
+    targetPort: {{ .Values.exporter.ports.containerPort }}
+    name: exporter-port
+{{- end }}
   selector:
     app: cpx-ingress
+
+---
+
+{{- if .Values.exporter.require }}
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+ name: citrix-adc-servicemonitor
+ labels:
+   servicemonitor: citrix-adc
+spec:
+ endpoints:
+ - interval: 30s
+   port: exporter-port
+ selector:
+   matchLabels:
+     service-type: citrix-adc-monitor
+ namespaceSelector:
+   matchNames:
+   - monitoring
+   - default
+   - {{ .Release.Namespace }}
+
+{{- end }}

@@ -15,5 +15,13 @@ cicimage:
 # license is used accept the terms of the Citrix license
 license:
   accept: no
-# ingressClass is the  name of the Ingress Class
-ingressClass: ['citrix-adc-cpx']
+# exporter conatins information of prometheus-exporter
+gclb:
+exporter:
+  require: 0
+  image:
+    repository: quay.io/citrix/netscaler-metrics-exporter
+    tag: v1.0.4
+    pullPolicy: Always
+  ports:
+    containerPort: 8888
