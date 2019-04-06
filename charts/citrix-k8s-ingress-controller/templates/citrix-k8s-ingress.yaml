@@ -52,8 +52,8 @@ spec:
       serviceAccountName: cic-k8s-role
       containers:
       - name: cic-k8s-ingress-controller
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }} 
+        image: "{{ .Values.cicimage }}"
+        imagePullPolicy: {{ .Values.cicimage.pullPolicy }} 
         args: 
 {{- if .Values.ingressClass }}
           - --ingress-class

@@ -1,0 +1,29 @@
+application_api_version: v1beta1
+properties:
+  name:
+    type: string
+    x-google-marketplace:
+      type: NAME
+  namespace:
+    type: string
+    x-google-marketplace:
+      type: NAMESPACE
+  cicimage:
+    type: string
+    default: gcr.io/citrix-master-project/citrix-k8s-ingress-controller/deployer:1.1.1
+    x-google-marketplace:
+      type: IMAGE
+  nsIP:
+    type: string
+    title: NS IP of the VPX
+    description: NS IP of the VPX
+  nsVIP:
+    type: string
+    title: Virtual IP of the VPX
+    description: Virtual IP of the VPX
+required:
+- name
+- namespace
+- cicimage
+- nsIP
+- nsVIP
