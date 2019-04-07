@@ -1,4 +1,0 @@
-docker-py==1.10.6
-PyYAML==3.13
-netaddr==0.7.19
-python-iptables==0.13.0

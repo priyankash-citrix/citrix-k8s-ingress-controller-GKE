@@ -1,46 +1,47 @@
-kind: ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1beta1
-metadata:
-  name: cic-k8s-role
-rules:
-  - apiGroups: [""]
-    resources: ["services", "endpoints", "ingresses", "pods", "secrets", "nodes"]
-    verbs: ["*"]
-  - apiGroups: ["extensions"]
-    resources: ["ingresses", "ingresses/status"]
-    verbs: ["*"]
-  - apiGroups: ["citrix.com"]
-    resources: ["rewritepolicies"]
-    verbs: ["*"]
-  - apiGroups: ["apps"]
-    resources: ["deployments"]
-    verbs: ["*"]
+#kind: ClusterRole
+#apiVersion: rbac.authorization.k8s.io/v1beta1
+#metadata:
+#  name: cic-k8s-role
+#rules:
+#  - apiGroups: [""]
+#    resources: ["services", "endpoints", "ingresses", "pods", "secrets", "nodes"]
+#    verbs: ["*"]
+#  - apiGroups: ["extensions"]
+#    resources: ["ingresses", "ingresses/status"]
+#    verbs: ["*"]
+#  - apiGroups: ["citrix.com"]
+#    resources: ["rewritepolicies"]
+#    verbs: ["*"]
+#  - apiGroups: ["apps"]
+#    resources: ["deployments"]
+#    verbs: ["*"]
 
----
+#---
 
-kind: ClusterRoleBinding
-apiVersion: rbac.authorization.k8s.io/v1beta1
-metadata:
-  name: cic-k8s-role
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cic-k8s-role
-subjects:
-- kind: ServiceAccount
-  name: cic-k8s-role
-  namespace: {{ .Release.Namespace }}
-apiVersion: rbac.authorization.k8s.io/v1
+#kind: ClusterRoleBinding
+#apiVersion: rbac.authorization.k8s.io/v1beta1
+#metadata:
+#  name: cic-k8s-role
+#roleRef:
+#  apiGroup: rbac.authorization.k8s.io
+#  kind: ClusterRole
+#  name: cic-k8s-role
+#subjects:
+#- kind: ServiceAccount
+#  name: cic-k8s-role
+#  namespace: {{ .Release.Namespace }}
+#apiVersion: rbac.authorization.k8s.io/v1
 
----
+#---
 
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: cic-k8s-role
-  namespace: {{ .Release.Namespace }}
+#apiVersion: v1
+#kind: ServiceAccount
+#metadata:
+#  name: cic-k8s-role
+#  namespace: {{ .Release.Namespace }}
 
----
+#---
+
 apiVersion: v1
 kind: Pod
 metadata:
@@ -51,8 +52,8 @@ spec:
       serviceAccountName: cic-k8s-role
       containers:
       - name: cic-k8s-ingress-controller
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        image: "{{ .Values.cicimage }}"
+        imagePullPolicy: {{ .Values.cicimage.pullPolicy }}
         args:
 {{- if .Values.ingressClass }}
           - --ingress-class
@@ -63,31 +64,31 @@ spec:
           - --feature-node-watch
             {{.Values.nodeWatch}}
         env:
-         # Set NetScaler NSIP/SNIP, SNIP in case of HA (mgmt has to be enabled) 
-         - name: "NS_IP"
-           value: "{{ .Values.nsIP }}"
-         # Set username for Nitro
-        - name: "NS_USER"
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.loginFileName | default "nslogin"}}
-              key: username
-        # Set user password for Nitro
-        - name: "NS_PASSWORD"
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.loginFileName | default "nslogin"}}
-              key: password
-        - name: "EULA"
-          value: "{{ .Values.license.accept }}"
-        - name: "LOGLEVEL"
-          value: "{{ .Values.logLevel}}"
-        - name: "NS_PROTOCOL"
-          value: "{{ .Values.nsProtocol }}"
-        - name: "NS_PORT"
-          value: "{{ .Values.nsPort}}"
-         - name: "NS_VIP"
-           value: "{{ .Values.nsVIP }}"
+          # Set NetScaler NSIP/SNIP, SNIP in case of HA (mgmt has to be enabled) 
+          - name: "NS_IP"
+            value: "{{ .Values.nsIP }}"
+          # Set username for Nitro
+          - name: "NS_USER"
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.loginFileName | default "nslogin"}}
+                key: username
+          # Set user password for Nitro
+          - name: "NS_PASSWORD"
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.loginFileName | default "nslogin"}}
+                key: password
+          - name: "EULA"
+            value: "{{ .Values.license.accept }}"
+          - name: "LOGLEVEL"
+            value: "{{ .Values.logLevel}}"
+          - name: "NS_PROTOCOL"
+            value: "{{ .Values.nsProtocol }}"
+          - name: "NS_PORT"
+            value: "{{ .Values.nsPort}}"
+          - name: "NS_VIP"
+            value: "{{ .Values.nsVIP }}"
 {{- if .Values.exporter.require }}
       - name: exporter
         image: "{{ .Values.exporter.image.repository }}:{{ .Values.exporter.image.tag }}"
