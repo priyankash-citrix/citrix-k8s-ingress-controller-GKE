@@ -21,19 +21,6 @@ There are two deployment solution present for Citrix Ingress Controller in Googl
 * Stanalone CIC for Citrix ADC VPX/MPX.
 * CIC running in side-car mode with Citrix ADC CPX.
 
-# **Questions**
-For questions and support the following channels are available:
-* [Citrix Discussion Forum](https://discussions.citrix.com/forum/1657-netscaler-cpx/). 
-* [NetScaler CPX Slack Channel](https://citrixadccloudnative.slack.com/)
-
-# **Issues**
-Describe the Issue in Details, Collects the logs and  Use the forum mentioned below
-```
-   https://discussions.citrix.com/forum/1657-netscaler-cpx/
-  
-   Get Logs: kubectl logs citrix-k8s-ingress-controller > log_file
-```
-
 # **Code of Conduct**
 This project adheres to the [Kubernetes Community Code of Conduct](https://github.com/kubernetes/community/blob/master/code-of-conduct.md). By participating in this project you agree to abide by its terms.
 
