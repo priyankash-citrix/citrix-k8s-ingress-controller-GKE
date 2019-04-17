@@ -3,17 +3,19 @@
 # Declare variables to be passed into your templates.
 
 # image contains information needed to fetch CIC image
-cicimage: "quay.io/citrix/citrix-k8s-ingress-controller:1.1.1"
-cicimage.pullPolicy: Always
+cicimage:
+  image: "quay.io/citrix/citrix-k8s-ingress-controller:1.1.1"
+  pullPolicy: "Always"
+serviceAccount:
 #loginFileName is secret file for NetScaler login
 loginFileName:
 # nsIP is NetScaler NSIP/SNIP, SNIP in case of HA (mgmt has to be enabled)
-nsIP: x.x.x.x
+nsIP:
 nsVIP:
 logLevel: DEBUG
 # license accept should be 'yes' to run Citrix Ingress Controller
 license:
-   accept: no
+   accept: yes
 # nsPort is port for NetScaler NITRO
 nsPort: 443
 # nsProtocol is protocol for NetScaler NITRO

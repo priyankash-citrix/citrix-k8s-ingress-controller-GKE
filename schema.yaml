@@ -8,22 +8,46 @@ properties:
     type: string
     x-google-marketplace:
       type: NAMESPACE
-  cicimage:
+  cicimage.image:
     type: string
-    default: gcr.io/citrix-master-project/citrix-k8s-ingress-controller/deployer:1.1.1
+    default: $REGISTRY:$TAG
     x-google-marketplace:
       type: IMAGE
   nsIP:
     type: string
     title: NS IP of the VPX
     description: NS IP of the VPX
+    default: 127.0.1.1
   nsVIP:
     type: string
     title: Virtual IP of the VPX
     description: Virtual IP of the VPX
+    default: 127.0.2.2
+  serviceAccount:
+    type: string
+    x-google-marketplace:
+      type: SERVICE_ACCOUNT
+      serviceAccount:
+        roles:
+        - type: ClusterRole
+          rulesType: CUSTOM
+          rules:
+          - apiGroups: ['']
+            resources: ['services', 'endpoints', 'ingresses', 'pods', 'secrets', 'nodes']
+            verbs: ['*']
+          - apiGroups: ['extensions']
+            resources: ['ingresses', 'ingresses/status']
+            verbs: ['*']
+          - apiGroups: ['citrix.com']
+            resources: ['rewritepolicies']
+            verbs: ['*']
+          - apiGroups: ['apps']
+            resources: ['deployments']
+            verbs: ['*']
+
 required:
 - name
 - namespace
-- cicimage
+- cicimage.image
 - nsIP
 - nsVIP

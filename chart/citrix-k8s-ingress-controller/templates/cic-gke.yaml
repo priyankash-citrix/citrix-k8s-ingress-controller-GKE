@@ -49,11 +49,11 @@ metadata:
   labels:
     app: cic-k8s-ingress-controller
 spec: 
-      serviceAccountName: cic-k8s-role
+      serviceAccountName: {{ .Values.serviceAccount }}
       containers:
       - name: cic-k8s-ingress-controller
-        image: "{{ .Values.cicimage }}"
-        imagePullPolicy: {{ .Values.cicimage.pullPolicy }}
+        image: "{{ .Values.cicimage.image }}"
+        imagePullPolicy: "{{ .Values.cicimage.pullPolicy }}"
         args:
 {{- if .Values.ingressClass }}
           - --ingress-class

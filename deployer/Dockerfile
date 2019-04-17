@@ -29,7 +29,7 @@ RUN cat /tmp/apptest/schema.yaml \
     && mv /tmp/apptest/schema.yaml.new /tmp/apptest/schema.yaml
 
 #FROM gcr.io/cloud-marketplace-tools/k8s/deployer_helm:$MARKETPLACE_TOOLS_TAG
-FROM gcr.io/cloud-marketplace-tools/k8s/deployer_helm:latest
+FROM gcr.io/cloud-marketplace-tools/k8s/deployer_helm:0.7.5
 #FROM gcr.io/cloud-marketplace-tools/k8s/deployer_helm/onbuild
 COPY --from=build /tmp/cic.tar.gz /data/chart/
 COPY --from=build /tmp/test/cic.tar.gz /data-test/chart/
