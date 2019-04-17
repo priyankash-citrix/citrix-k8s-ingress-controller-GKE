@@ -6,11 +6,12 @@
 cicimage:
   image: "quay.io/citrix/citrix-k8s-ingress-controller:1.1.1"
   pullPolicy: "Always"
+serviceAccount: default
 #loginFileName is secret file for NetScaler login
 loginFileName:
 # nsIP is NetScaler NSIP/SNIP, SNIP in case of HA (mgmt has to be enabled)
-nsIP: 127.0.1.1
-nsVIP: 127.0.2.2
+nsIP:
+nsVIP:
 logLevel: DEBUG
 # license accept should be 'yes' to run Citrix Ingress Controller
 license:

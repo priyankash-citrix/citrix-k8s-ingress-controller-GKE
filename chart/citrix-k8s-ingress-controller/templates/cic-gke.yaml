@@ -49,7 +49,7 @@ metadata:
   labels:
     app: cic-k8s-ingress-controller
 spec: 
-      serviceAccountName: default
+      serviceAccountName: {{ .Values.serviceAccount }}
       containers:
       - name: cic-k8s-ingress-controller
         image: "{{ .Values.cicimage.image }}"
