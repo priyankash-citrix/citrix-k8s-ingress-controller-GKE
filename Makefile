@@ -22,17 +22,12 @@ ifdef CITRIX_NSVIP
   CITRIX_NSVIP_FIELD = , "nsVIP": "$(CITRIX_NSVIP)"
 endif
 
-ifdef CITRIX_SERVICE_ACCOUNT
-  CITRIX_SERVICE_ACCOUNT = , "serviceAccount": "$(CITRIX_SERVICE_ACCOUNT)"
-endif
-
 APP_PARAMETERS ?= { \
   "name": "$(NAME)", \
   "namespace": "$(NAMESPACE)" \
   $(IMAGE_CITRIX_CONTROLLER_FIELD) \
   $(CITRIX_NSIP_FIELD) \
   $(CITRIX_NSVIP_FIELD) \
-  $(CITRIX_SERVICE_ACCOUNT) \
 }
 
 TESTER_IMAGE ?= $(REGISTRY)/citrix-k8s-ingress-controller/tester:$(TAG)

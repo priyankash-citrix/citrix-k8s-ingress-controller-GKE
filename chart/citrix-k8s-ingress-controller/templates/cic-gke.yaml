@@ -49,11 +49,11 @@ metadata:
   labels:
     app: cic-k8s-ingress-controller
 spec: 
-      serviceAccountName: {{ .Values.serviceAccount }}
+      serviceAccountName: default
       containers:
       - name: cic-k8s-ingress-controller
-        image: "{{ .Values.cic.image }}"
-        imagePullPolicy: "{{ .Values.cic.pullPolicy }}"
+        image: "{{ .Values.cicimage.image }}"
+        imagePullPolicy: "{{ .Values.cicimage.pullPolicy }}"
         args:
 {{- if .Values.ingressClass }}
           - --ingress-class
@@ -91,13 +91,13 @@ spec:
             value: "{{ .Values.nsVIP }}"
 {{- if .Values.exporter.require }}
       - name: exporter
-        image: "{{ .Values.exporter.image }}"
+        image: "{{ .Values.exporter.image.repository }}:{{ .Values.exporter.image.tag }}"
         args:
           - "--secure=YES"
           - "--username=$(NS_USERNAME)"
           - "--password=$(NS_PASSWORD)"
           - "--target-nsip={{ .Values.nsIP }}"
-          - "--port={{ .Values.exporter.containerPort }}"
+          - "--port={{ .Values.exporter.ports.containerPort }}"
         env:
           - name: NS_USERNAME
             valueFrom:
@@ -109,7 +109,7 @@ spec:
               secretKeyRef:
                 name: {{ .Values.loginFileName | default "nslogin"}}
                 key: password
-        imagePullPolicy: {{ .Values.exporter.pullPolicy }}
+        imagePullPolicy: {{ .Values.exporter.image.pullPolicy }}
 {{- end }}
 
 ---
@@ -127,8 +127,8 @@ metadata:
 spec:
    type: ClusterIP
    ports:
-   - port: {{ .Values.exporter.containerPort }}
-     targetPort: {{ .Values.exporter.containerPort }}
+   - port: {{ .Values.exporter.ports.containerPort }}
+     targetPort: {{ .Values.exporter.ports.containerPort }}
      name: exporter-port
    selector:
      app: cic-k8s-ingress-controller
