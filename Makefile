@@ -5,6 +5,7 @@ include ../var.Makefile
 
 
 TAG ?= 1.1.1
+EXPORTER_TAG ?= v1.0.4
 $(info ---- TAG = $(TAG))
 
 APP_DEPLOYER_IMAGE ?= $(REGISTRY)/citrix-k8s-ingress-controller/deployer:$(TAG)
@@ -84,6 +85,16 @@ app/build:: .build/citrix-k8s-ingress-controller/debian9  \
 	docker tag quay.io/citrix/citrix-k8s-ingress-controller:$(TAG) \
 	    "$(REGISTRY)/citrix-k8s-ingress-controller:$(TAG)"
 	docker push "$(REGISTRY)/citrix-k8s-ingress-controller:$(TAG)"
+	@touch "$@"
+
+
+.build/citrix-k8s-ingress-controller/citrix-k8s-ingress-controller: .build/var/REGISTRY \
+                    .build/var/TAG \
+                    | .build/citrix-k8s-ingress-controller
+	docker pull quay.io/citrix/netscaler-metrics-exporter:$(EXPORTER_TAG)
+	docker tag quay.io/citrix/netscaler-metrics-exporter:$(EXPORTER_TAG) \
+	    "$(REGISTRY)/citrix-k8s-ingress-controller/netscaler-metrics-exporter:$(TAG)"
+	docker push "$(REGISTRY)/citrix-k8s-ingress-controller/netscaler-metrics-exporter:$(TAG)"
 	@touch "$@"
 
 

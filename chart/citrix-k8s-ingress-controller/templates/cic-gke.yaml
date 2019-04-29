@@ -9,8 +9,8 @@ spec:
       serviceAccountName: {{ .Values.serviceAccount }}
       containers:
       - name: cic-k8s-ingress-controller
-        image: "{{ .Values.cicimage.image }}"
-        imagePullPolicy: "{{ .Values.cicimage.pullPolicy }}"
+        image: "{{ .Values.cic.image }}"
+        imagePullPolicy: "{{ .Values.cic.pullPolicy }}"
         args:
 {{- if .Values.ingressClass }}
           - --ingress-class
@@ -46,9 +46,9 @@ spec:
             value: "{{ .Values.nsPort}}"
           - name: "NS_VIP"
             value: "{{ .Values.nsVIP }}"
-{{- if .Values.exporter.require }}
+{{- if .Values.exporter.required }}
       - name: exporter
-        image: "{{ .Values.exporter.image.repository }}:{{ .Values.exporter.image.tag }}"
+        image: "{{ .Values.exporter.image }}"
         args:
           - "--secure=YES"
           - "--username=$(NS_USERNAME)"
@@ -71,7 +71,7 @@ spec:
 
 ---
 
-{{- if .Values.exporter.require }}
+{{- if .Values.exporter.required }}
 
 
 apiVersion: v1

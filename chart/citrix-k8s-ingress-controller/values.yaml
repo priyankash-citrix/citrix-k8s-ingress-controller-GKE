@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 # image contains information needed to fetch CIC image
-cicimage:
+cic:
   image: "quay.io/citrix/citrix-k8s-ingress-controller:1.1.1"
   pullPolicy: "Always"
 serviceAccount: default
@@ -12,7 +12,6 @@ loginFileName:
 # nsIP is NetScaler NSIP/SNIP, SNIP in case of HA (mgmt has to be enabled)
 nsIP:
 nsVIP:
-logLevel: DEBUG
 # license accept should be 'yes' to run Citrix Ingress Controller
 license:
    accept: yes
@@ -26,10 +25,8 @@ logLevel: DEBUG
 nodeWatch: false
 # exporter conatins information of prometheus-exporter
 exporter:
-  require: 0
-  image:
-       repository: quay.io/citrix/netscaler-metrics-exporter
-       tag: v1.0.4
-       pullPolicy: Always
+  required: 0
+  image: "quay.io/citrix/netscaler-metrics-exporter:v1.0.4"
+  pullPolicy: Always
   ports:
        containerPort: 8888
