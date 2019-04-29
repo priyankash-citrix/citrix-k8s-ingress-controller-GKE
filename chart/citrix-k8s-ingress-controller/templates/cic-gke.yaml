@@ -59,12 +59,12 @@ spec:
           - name: NS_USERNAME
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.loginFileName | default (.Release.Name . "-nslogin") }}
+                name: {{ .Values.loginFileName | default (printf "%s-nslogin" (.Release.Name)) }}
                 key: username
           - name: NS_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.loginFileName | default (.Release.Name . "-nslogin") }}
+                name: {{ .Values.loginFileName | default (printf "%s-nslogin" (.Release.Name)) }}
                 key: password
         imagePullPolicy: {{ .Values.exporter.image.pullPolicy }}
 {{- end }}
