@@ -118,7 +118,7 @@ ssh nsroot@1.1.1.1
 
 clear config -force full
 add ns ip 172.18.0.5 255.255.0.0 -type snip -mgmt enabled
-enable ns feature MBF
+enable ns mode MBF
 ```
 Now the VPX instance is ready
 
@@ -147,7 +147,10 @@ The Application resource is defined by the [Kubernetes SIG-apps](https://github.
 
 Go to GoogleCloudPlatform/click-to-deploy/k8s folder and clone this repo. Go to citrix-k8s-ingress-controller:
 ```shell
-cd citrix-k8s-ingress-controller
+cd click-to-deploy/k8s
+git clone https://github.com/priyankash-citrix/citrix-k8s-ingress-controller-GKE.git
+cd citrix-k8s-ingress-controller-GKE/
+
 ```
 
 The following table lists the configurable parameters of the Citrix Ingress Controller chart and their default values.
@@ -171,8 +174,11 @@ The following table lists the configurable parameters of the Citrix Ingress Cont
 
 Assign values to the required parameters: 
 
+* NS_IP should be replaced with the NSIP or SNIP with management access enabled of the VPX instance. In my example it is "172.18.0.5"
+* NS_VIP should be replaced with the VIP (Client side IP) of the VPX instance. In my example it is "172.19.0.2"
+
 ```shell
-NSIP=<NSIP-of-VPX-instance>
+NSIP=<NSIP-of-VPX-instance or SNIP-with-management-access-enabled>
 NSVIP=<VIP-of-VPX-instance>
 CITRIX_NAME=citrix-1
 CITRIX_NAMESPACE=default
@@ -200,11 +206,11 @@ helm template chart/citrix-k8s-ingress-controller \
 
 Finally, deploy the chart:
 ```shell
-kubectl apply -f /tmp/$CITRIX_NAME.yaml
+kubectl create-f /tmp/$CITRIX_NAME.yaml
 ```
 
 #### **Uninstall the Application**
-Delete the application and cluster:
+Delete the application, service account and cluster:
 ```shell
 kubectl delete -f /tmp/$CITRIX_NAME.yaml
 cat service_account.yaml | sed -e "s/{NAMESPACE}/$CITRIX_NAMESPACE/g" -e "s/{SERVICEACCOUNTNAME}/$CITRIX_SERVICEACCOUNT/g" | kubectl delete -f -
