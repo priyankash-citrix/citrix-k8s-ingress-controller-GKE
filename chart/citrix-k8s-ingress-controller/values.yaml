@@ -14,7 +14,7 @@ nsIP:
 nsVIP:
 # license accept should be 'yes' to run Citrix Ingress Controller
 license:
-   accept: yes
+   accept: no
 # nsPort is port for NetScaler NITRO
 nsPort: 443
 # nsProtocol is protocol for NetScaler NITRO

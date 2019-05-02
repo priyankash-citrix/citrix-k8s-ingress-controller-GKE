@@ -169,22 +169,31 @@ The following table lists the configurable parameters of the Citrix Ingress Cont
 |```exporter.pullPolicy```|Exporter Image Pull Policy|```Always```|
 |```exporter.ports.containerPort```|Exporter Container Port|```8888```|
 
-Assign values to the reequired parameters: 
+Assign values to the required parameters: 
 
 ```shell
 NSIP=<NSIP-of-VPX-instance>
 NSVIP=<VIP-of-VPX-instance>
 CITRIX_NAME=citrix-1
 CITRIX_NAMESPACE=default
+CITRIX_SERVICEACCOUNT=cic-k8s-role
 ```
 
-> NOTE: The above are the mandatory parameters. In addition to these you can assign values to the parameters mentioned in the above table.
+Create a service account with required permissions:
+
+```shell
+cat service_account.yaml | sed -e "s/{NAMESPACE}/$CITRIX_NAMESPACE/g" -e "s/{SERVICEACCOUNTNAME}/$CITRIX_SERVICEACCOUNT/g" | kubectl create -f -
+```
+
+> NOTE: The above are the mandatory parameters. In addition to these you can also assign values to the parameters mentioned in the above table.
 
 Create a template for the chart using the parameters you want to set:
 ```
 helm template chart/citrix-k8s-ingress-controller \
   --name $CITRIX_NAME \
   --namespace $CITRIX_NAMESPACE \
+  --set license.accept=yes \
+  --set serviceAccount=$CITRIX_SERVICEACCOUNT \
   --set nsIP=$NSIP \
   --set nsVIP=$NSVIP > /tmp/$CITRIX_NAME.yaml
 ```
@@ -198,6 +207,7 @@ kubectl apply -f /tmp/$CITRIX_NAME.yaml
 Delete the application and cluster:
 ```shell
 kubectl delete -f /tmp/$CITRIX_NAME.yaml
+cat service_account.yaml | sed -e "s/{NAMESPACE}/$CITRIX_NAMESPACE/g" -e "s/{SERVICEACCOUNTNAME}/$CITRIX_SERVICEACCOUNT/g" | kubectl delete -f -
 gcloud container clusters delete citrix-cic --zone asia-south1-a
 ```
 

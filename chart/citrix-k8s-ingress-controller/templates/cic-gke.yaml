@@ -14,9 +14,7 @@ spec:
         args:
 {{- if .Values.ingressClass }}
           - --ingress-class
-{{- range .Values.ingressClass}}
-            {{.}}
-{{- end }}
+            {{ .Values.ingressClass }}
 {{- end }}
           - --feature-node-watch
             {{.Values.nodeWatch}}

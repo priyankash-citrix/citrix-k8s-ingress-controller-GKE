@@ -77,7 +77,7 @@ properties:
     default: false
   exporter.image:
     type: string
-    default: "quay.io/citrix/netscaler-metrics-exporter:v1.0.4"
+    default: $REGISTRY/netscaler-metrics-exporter:$TAG
     x-google-marketplace:
       type: IMAGE
   exporter.required:
