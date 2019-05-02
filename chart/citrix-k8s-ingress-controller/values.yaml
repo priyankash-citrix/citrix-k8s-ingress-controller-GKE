@@ -21,6 +21,7 @@ nsPort: 443
 nsProtocol: HTTPS
 # logLevel is to set level of CIC Logs
 logLevel: DEBUG
+ingressClass:
 #nodeWatch is used for automatic route configuration on NetScaler towards the pod network
 nodeWatch: false
 # exporter conatins information of prometheus-exporter

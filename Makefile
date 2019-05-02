@@ -5,6 +5,7 @@ include ../var.Makefile
 
 
 TAG ?= 1.1.1
+GCP_TAG ?=1.1
 EXPORTER_TAG ?= v1.0.4
 $(info ---- TAG = $(TAG))
 
@@ -12,7 +13,7 @@ APP_DEPLOYER_IMAGE ?= $(REGISTRY)/citrix-k8s-ingress-controller/deployer:$(TAG)
 NAME ?= citrix-k8s-ingress-controller-1
 
 ifdef IMAGE_CITRIX_CONTROLLER
-  IMAGE_CITRIX_CONTROLLER_FIELD = , "cicimage.image": "$(IMAGE_CITRIX_CONTROLLER)" endif
+  IMAGE_CITRIX_CONTROLLER_FIELD = , "cic.image": "$(IMAGE_CITRIX_CONTROLLER)" endif
 endif
 
 ifdef CITRIX_NSIP
@@ -75,6 +76,10 @@ app/build:: .build/citrix-k8s-ingress-controller/debian9  \
 	    -f deployer/Dockerfile \
 	    .
 	docker push "$(APP_DEPLOYER_IMAGE)"
+	docker pull "$(APP_DEPLOYER_IMAGE)"
+	docker tag "$(APP_DEPLOYER_IMAGE)" \
+            "$(REGISTRY)/citrix-k8s-ingress-controller/deployer:$(GCP_TAG)"
+	docker push "$(REGISTRY)/citrix-k8s-ingress-controller/deployer:$(GCP_TAG)"
 	@touch "$@"
 
 
@@ -85,6 +90,9 @@ app/build:: .build/citrix-k8s-ingress-controller/debian9  \
 	docker tag quay.io/citrix/citrix-k8s-ingress-controller:$(TAG) \
 	    "$(REGISTRY)/citrix-k8s-ingress-controller:$(TAG)"
 	docker push "$(REGISTRY)/citrix-k8s-ingress-controller:$(TAG)"
+	docker tag quay.io/citrix/citrix-k8s-ingress-controller:$(TAG) \
+            "$(REGISTRY)/citrix-k8s-ingress-controller:$(GCP_TAG)"
+	docker push "$(REGISTRY)/citrix-k8s-ingress-controller:$(GCP_TAG)"
 	@touch "$@"
 
 
