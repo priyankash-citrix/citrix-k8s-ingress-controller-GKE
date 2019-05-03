@@ -145,11 +145,11 @@ The Application resource is defined by the [Kubernetes SIG-apps](https://github.
 
 ### **Install the Application**
 
-Go to GoogleCloudPlatform/click-to-deploy/k8s folder and clone this repo. Go to citrix-k8s-ingress-controller:
+Go to GoogleCloudPlatform/click-to-deploy/k8s folder and clone this repo. Go to citrix-ingress-controller-gcp-marketplace directory:
 ```shell
 cd click-to-deploy/k8s
-git clone https://github.com/priyankash-citrix/citrix-k8s-ingress-controller-GKE.git
-cd citrix-k8s-ingress-controller-GKE/
+git clone https://github.com/citrix/citrix-ingress-controller-gcp-marketplace.git
+cd citrix-ingress-controller-gcp-marketplace/
 
 ```
 
@@ -206,7 +206,7 @@ helm template chart/citrix-k8s-ingress-controller \
 
 Finally, deploy the chart:
 ```shell
-kubectl create-f /tmp/$CITRIX_NAME.yaml
+kubectl create -f /tmp/$CITRIX_NAME.yaml
 ```
 
 #### **Uninstall the Application**
